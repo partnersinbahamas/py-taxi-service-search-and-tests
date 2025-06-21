@@ -80,3 +80,26 @@ class TestCarModel(TestCase):
         created_car = Car.objects.create(**self.model_params)
 
         self.assertEqual(str(created_car), self.model_params["model"])
+
+
+class TestDriverModel(TestCase):
+    def test_driver_creation(self):
+        model_params = {
+            "username": "Driver-1",
+            "license_number": "JIM26531",
+            "first_name": "First",
+            "last_name": "Last",
+            "password": "user_password",
+        }
+        created_driver = Driver.objects.create_user(**model_params)
+
+        self.assertEqual(created_driver.username, model_params["username"])
+        self.assertEqual(
+            created_driver.license_number,
+            model_params["license_number"]
+        )
+        self.assertEqual(created_driver.first_name, model_params["first_name"])
+        self.assertEqual(created_driver.last_name, model_params["last_name"])
+        self.assertTrue(
+            created_driver.check_password(model_params["password"])
+        )

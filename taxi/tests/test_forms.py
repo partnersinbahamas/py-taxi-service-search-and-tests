@@ -1,6 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from ..forms import ManufacturerSearchForm, CarSearchForm, CarForm
+from ..forms import (
+    ManufacturerSearchForm,
+    CarSearchForm,
+    CarForm,
+    DriverCreationForm
+)
 from ..models import Manufacturer, Driver
 
 
@@ -83,3 +88,43 @@ class TestCarForm(TestCase):
             list(form.cleaned_data["drivers"]),
             list(created_drivers)
         )
+
+
+class TestDriverCreationForm(TestCase):
+    def setUp(self):
+        self.form_data = {
+            "username": "Driver-1",
+            "license_number": "JIM26531",
+            "first_name": "First",
+            "last_name": "Last",
+            "password1": "user_password",
+            "password2": "user_password",
+        }
+
+    def test_form_field_valid(self):
+        form = DriverCreationForm(self.form_data)
+
+        self.assertTrue(form.is_valid())
+        self.assertEqual(
+            form.cleaned_data["username"],
+            form.cleaned_data["username"]
+        )
+        self.assertEqual(
+            form.cleaned_data["first_name"],
+            form.cleaned_data["first_name"]
+        )
+        self.assertEqual(
+            form.cleaned_data["last_name"],
+            form.cleaned_data["last_name"]
+        )
+        self.assertEqual(
+            form.cleaned_data["license_number"],
+            form.cleaned_data["license_number"]
+        )
+
+    def test_form_field_invalid(self):
+        self.form_data["license_number"] = "17326531"
+
+        form = DriverCreationForm(self.form_data)
+
+        self.assertFalse(form.is_valid())
