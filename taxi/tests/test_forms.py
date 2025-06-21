@@ -52,7 +52,7 @@ class TestCarSearchForm(TestCase):
 
 class TestCarForm(TestCase):
     def test_form_field_valid(self):
-        created_drivers = get_user_model().objects.bulk_create(
+        created_drivers = Driver.objects.bulk_create(
             [
                 Driver(
                     username="D-1",

@@ -38,7 +38,7 @@ class TestCarModel(TestCase):
             country="Country-1",
         )
 
-        self.created_drivers = get_user_model().objects.bulk_create(
+        self.created_drivers = Driver.objects.bulk_create(
             [
                 Driver(
                     username="D-1",
