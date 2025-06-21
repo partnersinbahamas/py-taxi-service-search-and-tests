@@ -1,5 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
-from ..models import Manufacturer
+from ..models import Manufacturer, Driver, Car
 
 
 class TestManufacturerModel(TestCase):
@@ -28,3 +29,54 @@ class TestManufacturerModel(TestCase):
             f"{self.created_manufacturer.name} "
             f"{self.created_manufacturer.country}"
         )
+
+
+class TestCarModel(TestCase):
+    def setUp(self):
+        self.created_manufacturer = Manufacturer.objects.create(
+            name="Manufacturer-1",
+            country="Country-1",
+        )
+
+        self.created_drivers = get_user_model().objects.bulk_create(
+            [
+                Driver(
+                    username="D-1",
+                    password="d-1-password",
+                    license_number="JIM26531"
+                ),
+                Driver(
+                    username="D-2",
+                    password="d-2-password",
+                    license_number="DOM26531"
+                ),
+            ],
+        )
+
+        self.model_params = {
+            "model": "M-1",
+            "manufacturer": self.created_manufacturer,
+        }
+
+    def test_driver_creation(self):
+        created_car = Car.objects.create(**self.model_params)
+
+        created_car.drivers.set(self.created_drivers)
+
+        self.assertEqual(
+            created_car.model,
+            self.model_params["model"]
+        )
+        self.assertEqual(
+            created_car.manufacturer,
+            self.model_params["manufacturer"]
+        )
+        self.assertEqual(
+            list(created_car.drivers.all()),
+            list(self.created_drivers)
+        )
+
+    def test_driver_str_method(self):
+        created_car = Car.objects.create(**self.model_params)
+
+        self.assertEqual(str(created_car), self.model_params["model"])
